@@ -1,0 +1,102 @@
+<html>
+
+
+    <head>
+
+
+    </head>
+
+    <body>
+<div style="display: flex; justify-content: center; align-items: center; height: 100vh;">><font align="center" face="arial black" size="10"><h1>PRESS THE BUTTON</h1><font></div>
+
+    <button class="big-button" id="pressBtn">PRESS ME</button>
+<div class="counter" id="counter" style="display:none; position:fixed; top:20px; left:30px; font-size:32px; font-family:'Arial Black',Arial,sans-serif; color:#000; z-index:3;"></div>
+<div class="timer" id="timer" style="display:none; position:fixed; top:20px; right:30px; font-size:32px; font-family:'Arial Black',Arial,sans-serif; color:#000; z-index:3;"></div>
+<style>
+  .big-button {
+    position: absolute;
+    left: 50%;
+    font-family: 'Arial Black', Arial, sans-serif;
+    font-size: 48px;
+    padding: 40px 80px;
+    background: #000;
+    color: #fff;
+    border: none;
+    border-radius: 32px;
+    cursor: pointer;
+    text-transform: uppercase;
+    z-index: 2;
+    transform: translateX(-50%);
+  }
+</style>
+<script>
+  const btn = document.getElementById('pressBtn');
+  const counter = document.getElementById('counter');
+  const timer = document.getElementById('timer');
+  let clicks = 0;
+  let timerStarted = false;
+  let timeLeft = 120; // seconds
+  let timerInterval;
+
+  function startTimer() {
+    timer.style.display = 'block';
+    timerInterval = setInterval(() => {
+      timeLeft--;
+      let min = String(Math.floor(timeLeft / 60)).padStart(2, '0');
+      let sec = String(timeLeft % 60).padStart(2, '0');
+      timer.textContent = `${min}:${sec}`;
+      if (timeLeft <= 0) {
+        clearInterval(timerInterval);
+        if (clicks < 50) {
+          window.close();
+          document.body.innerHTML = '';
+        }
+      }
+    }, 1000);
+  }
+
+  function teleportButton() {
+    // Get viewport dimensions
+    const btnRect = btn.getBoundingClientRect();
+    const minY = 150; // adjust this value to keep button below your text
+    const maxY = window.innerHeight - btnRect.height - 20;
+    const minX = 0;
+    const maxX = window.innerWidth - btnRect.width;
+
+    const randY = Math.floor(Math.random() * (maxY - minY + 1)) + minY;
+    const randX = Math.floor(Math.random() * (maxX - minX + 1)) + minX;
+
+    btn.style.top = randY + 'px';
+    btn.style.left = (randX + minX) + 'px';
+  }
+
+  btn.addEventListener('click', function() {
+    if (!timerStarted) {
+      timerStarted = true;
+      counter.style.display = 'block';
+      startTimer();
+    }
+    clicks++;
+    counter.textContent = `${clicks}/50`;
+    teleportButton();
+
+    if (clicks >= 50) {
+      btn.style.display = 'none';
+      counter.style.display = 'none';
+      timer.style.display = 'none';
+      // You can trigger your WIN logic here
+    }
+  });
+
+  // Initial position: just below your text, centered
+  window.onload = function() {
+    btn.style.top = '150px'; // adjust this value to match your text position
+    btn.style.left = '50%';
+    btn.style.transform = 'translateX(-50%)';
+  };
+</script>
+
+    </body>
+
+
+</html>
